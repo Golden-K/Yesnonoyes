@@ -30,10 +30,9 @@ function getYelpResult(categories, settings, offset, location) {
   if(offset === undefined) {
     offset = 0;
   }
-  categories +=
-  settings.gluttonFree ? ',glutton_free' : ''
-  + settings.vegan ? ',vegan' : ''
-  + settings.vegetarian ? ',vegetarian' : '';
+  categories += settings.gluttonFree ? ',glutton_free' : '';
+  categories += settings.vegan ? ',vegan' : '';
+  categories += settings.vegetarian ? ',vegetarian' : '';
   let search = {
     categories: categories,
     latitude: location.lat,
@@ -42,7 +41,6 @@ function getYelpResult(categories, settings, offset, location) {
     price: settings.price.toString(),
     offset: offset
   };
-  console.log('search', search);
   return fetch(`${URL}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

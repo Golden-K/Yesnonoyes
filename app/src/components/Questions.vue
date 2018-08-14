@@ -1,7 +1,7 @@
 <template>
   <span id="questions-main">
     <span id="title">
-      <span id="back" class="fa fa-reply" @click="toggleView('back')" />
+      <span id="back" class="fa fa-reply" @click="goBack()" />
       <h3> </h3>
       <span id="like" class="fa fa-list-ul" @click="toggleView('liked')" />
     </span>
@@ -17,6 +17,10 @@
 <script>
 import { GLOBAL_CATEGORIES } from '../assets/CATEGORIES.js';
 import { detectSwipe } from '../services/swipe';
+
+function assignGlobal() {
+  return JSON.parse(JSON.stringify(GLOBAL_CATEGORIES));
+}
 export default {
   name: 'Questions',
   props: {
@@ -39,7 +43,7 @@ export default {
   data() {
     return {
       currentCat: '',
-      copyCat: GLOBAL_CATEGORIES,
+      copyCat: assignGlobal(),
       searchingCategories: true,
       ask: 'first',
       paramCount: 0,
@@ -75,9 +79,16 @@ export default {
 
     getResult() {
       this.toggleView('loading');
+      this.copyCat = assignGlobal();
       this.getSearchResult(this.currentCat.alias, 0);
     },
+
+    goBack() {
+      this.copyCat = assignGlobal();
+      this.toggleView('back');
+    }
   },
+
   mounted() {
     console.log('copycat', this.copyCat);
     this.randomCat();
