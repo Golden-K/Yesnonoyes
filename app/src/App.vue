@@ -305,7 +305,6 @@ export default {
       // }
 
       // Delete next line after categories functionality is updated
-      categories = 'burgers,french,pizza,thai';
       getYelpResult(categories, this.settings, offset, this.location)
         .then(result => {
           console.log('we hurrr?');

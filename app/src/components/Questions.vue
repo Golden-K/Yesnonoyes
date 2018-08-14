@@ -9,8 +9,7 @@
     <h2 @click="handleYes()" class="fa fa-chevron-right" id="right" />
     <p>Swipe Left for NO and Right for YES</p>
     <!-- <span> -->
-      <!-- <h1 id="questions" v-if="searchingCategories ">{{ questions.categories[ask].ask }}</h1>
-      <h1 id="questions" v-else>{{ questions.params[paramCount].ask }}</h1> -->
+      <h1 id="questions">{{ currentCat.category }}</h1>
     <!-- </span> -->
   </span>
 </template>
@@ -39,7 +38,8 @@ export default {
 
   data() {
     return {
-      GLOBAL_CATEGORIES: GLOBAL_CATEGORIES,
+      currentCat: '',
+      copyCat: GLOBAL_CATEGORIES,
       searchingCategories: true,
       ask: 'first',
       paramCount: 0,
@@ -48,70 +48,47 @@ export default {
   },
 
   methods: {
-    // handleYes() {
-    //   console.log('categoreis issss', CATEGORIES);
-    //   this.handleSwipe('questions', 'r');
-    //   // Timeout only necessarry for aesthetics
-    //   setTimeout(() => {
-    //     if(this.searchingCategories) {
-    //       let result = this.questions.categories[this.ask];
-    //       if(result.end) {
-    //         this.categories = result.yes;
-    //         this.searchingCategories = false;
-    //         return;
-    //       }
-    //       this.ask = result.yes;
-    //     } else {
-    //       let result = this.questions.params[this.paramCount];
-    //       this.params[result.type] = result.yes;
-    //       this.paramCount++;
-    //       if(this.paramCount >= 3) {
-    //         this.getResult();
-    //       }
-    //     }
-    //   }, 250);
-    // },
-    // handleNo() {
-    //   this.handleSwipe('questions', 'l');
-    //   // Timeout only necessarry for aesthetics
-    //   setTimeout(() => {
-    //     if(this.searchingCategories) {
-    //       let result = this.questions.categories[this.ask];
-    //       if(result.end) {
-    //         this.categories = result.no;
-    //         this.searchingCategories = false;
-    //         return;
-    //       }
-    //       this.ask = result.no;
-    //     } else {
-    //       let result = this.questions.params[this.paramCount];
-    //       this.params[result.type] = result.no;
-    //       this.paramCount++;
-    //       if(this.paramCount >= 3) {
-    //         this.getResult();
-    //       }
-    //     }
-    //   }, 250);
-    // },
-    // getResult() {
-    //   this.toggleView('loading');
-    //   this.paramCount = 0;
-    //   this.searchingCategories = true;
-    //   this.getSearchResult(this.categories, 0);
-    // },
+    randomCat() {
+      let random = Math.floor(Math.random() * this.copyCat.length);
+      this.currentCat = this.copyCat[random];
+      console.log('BEFORE', this.copyCat.length);
+      this.copyCat.splice(random, 1);
+      console.log('AFTER', this.copyCat.length);
+      // this.copyCat = this.copyCat.filter(a => a.category !== this.currentCat.category);
+
+    },
+
+    handleYes() {
+      this.getResult();
+    },
+
+    handleNo() {
+      this.handleSwipe('questions', 'l');
+      // Timeout only necessarry for aesthetics
+      setTimeout(() => {
+        this.randomCat();
+        if(this.copyCat.length === 0) {
+          this.toggleView('noresult');
+        }
+      }, 250);
+    },
+
+    getResult() {
+      this.toggleView('loading');
+      this.getSearchResult(this.currentCat.alias, 0);
+    },
   },
   mounted() {
-    console.log('cats', this.GLOBAL_CATEGORIES);
-    setTimeout(() => {
-      detectSwipe('questions-main', (id, dir) => {
-        if(dir === 'r') {
-          this.handleYes();
-        }
-        else if(dir === 'l') {
-          this.handleNo();
-        }
-      });
-    }, 200);
+    console.log('copycat', this.copyCat);
+    this.randomCat();
+    detectSwipe('questions-main', (id, dir) => {
+      if(dir === 'r') {
+        this.handleYes();
+      }
+      else if(dir === 'l') {
+        this.handleNo();
+      }
+    });
   }
 };
 </script>

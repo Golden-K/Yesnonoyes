@@ -175,6 +175,7 @@ li {
   position: relative;
   display: inline-block;
   width: 50%;
+  height: 100%;
   padding-left: 6px;
   background-color: red;
   color: white;
