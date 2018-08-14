@@ -1,0 +1,161 @@
+<template>
+    <span id="settings-main">
+        <span id="title">
+            <span id="back" class="fa fa-reply" @click="goBack('back')" />
+            <h3> </h3>
+            <h3> </h3>
+        </span>
+        <div id="main-content">
+            <form id="form">
+                 <div class="left">Glutton Free</div>
+                <div class="right">
+                    <input class="checkbox" type="checkbox" v-model="settings.gluttonFree">
+                </div>
+
+                <div class="left">Vegan</div>
+                <div class="right">
+                    <input class="checkbox" type="checkbox" v-model="settings.vegan">
+                </div>
+
+                <div class="left">Vegetarian</div>
+                <div class="right">
+                    <input class="checkbox" type="checkbox" v-model="settings.vegetarian">
+                </div>
+
+                <div class="left">Price</div>
+                <div class="right">
+                    <span v-for="i in [1, 2, 3, 4]" :key=i>
+                        <a @click="setPrice(i)">
+                            <span :id="i + '-dollar'" :class="settings.price >= i ? 'dollar-light dollars fa fa-dollar' : 'dolar-default dollars fa fa-dollar'" />
+                        </a>
+                    </span>
+                </div>
+
+                <div class="left">Zip Code</div>
+                <div class="right">
+                    <div>
+                        <input class="textbox" type="text" v-model="settings.zipCode" maxlength="5" pattern="^\d$">
+                    </div>
+                </div>
+
+                <div class="left">Distance</div>
+                <div class="right">
+                    <input type="range" min="1" max="25" v-model="settings.distance">
+                    <br />{{ settings.distance }}
+                    <span v-if="settings.distance == 1"> mile </span>
+                    <span v-else> miles</span>
+                </div>
+
+                <!-- Clear / Save -->
+                <div id="clear-settings">
+                    <input class="clear-btn" type="button" @click="clearSettings()" value="Clear">
+                </div>
+
+                <div id="save-settings">
+                    <input class="save-btn" type="submit" @click.prevent="saveSettings()" value="Save">
+                </div>
+            </form>
+        </div>
+    </span>
+</template>
+
+<script>
+export default {
+  name: 'Settings',
+  props: {
+    settings: Object,
+    toggleView: {
+      type: Function,
+      required: true
+    },
+    checkSettings: {
+      type: Function,
+      required: true
+    },
+    resetSettings: {
+      type: Function,
+      required: true
+    }
+  },
+
+  methods: {
+    goBack(page) {
+      this.checkSettings();
+      this.toggleView(page);
+    },
+    setPrice(price) {
+      this.settings.price = price;
+      for(let i = 1; i <= 4; i++) {
+        let dollar = document.getElementById(i + '-dollar');
+        dollar.classList.remove('dollar-light');
+        dollar.classList.add('dollar-default');
+      }
+      for(let i = 1; i <= price; i++) {
+        let dollar = document.getElementById(i + '-dollar');
+        dollar.classList.remove('dollar-default');
+        dollar.classList.add('dollar-light');
+      }
+    },
+    saveSettings() {
+      localStorage.setItem('settings', JSON.stringify(this.settings));
+    },
+    clearSettings() {
+      localStorage.setItem('settings', '');
+      this.resetSettings();
+    }
+  },
+  mounted() {
+    this.setPrice(this.settings.price);
+  }
+};
+</script>
+
+<style scoped>
+#main-content {
+    height: calc(100% - 26px);
+    margin: auto;
+    padding: 13px;
+    max-height: 568px;
+    max-width: 320px;
+}
+#form {
+    height: 100%;
+    display: grid;
+    grid-template:
+        'l  r';
+    font-size: 25px;
+}
+.left {
+    grid-area: 'l';
+    text-align: left;
+}
+.right {
+    grid-area: 'r';
+    text-align: right;
+}
+.checkbox {
+    transform: scale(2);
+}
+.dollars {
+    padding-left: 13px;
+}
+.dollar-light {
+    color: goldenrod;
+}
+.dollar-default {
+    color: #eeeeee;
+}
+.textbox {
+    font-size: 25px;
+    width: 5rem;
+}
+.clear-btn, .save-btn {
+    font-size: 25px;
+}
+#clear-button {
+
+}
+#save-button {
+
+}
+</style>
