@@ -1,77 +1,96 @@
 <template>
     <span id="settings-main">
-        <span id="title">
-            <span id="back" class="fa fa-reply" @click="goBack('back')" />
-            <h3> </h3>
-            <h3> </h3>
-        </span>
-        <div id="main-content">
-            <form id="form">
-                <span id="col-left">
-                    <div class="left">Glutton Free</div>
-                    <div class="left">Vegan</div>
-                    <div class="left">Vegetarian</div>
-                    <div class="left">Price</div>
-                    <div class="left">Zip Code</div>
-                    <div class="left">Distance</div>
-                </span>
+        <span v-if="!undisliking">
+            <span id="title">
+                <span id="back" class="fa fa-reply" @click="toggleView('back')" />
+                <h3> </h3>
+                <h3> </h3>
+            </span>
+            <div id="main-content">
+                <form id="form">
+                    <span id="col-left">
+                        <div class="left">Glutton Free</div>
+                        <div class="left">Vegan</div>
+                        <div class="left">Vegetarian</div>
+                        <div class="left">Price</div>
+                        <div class="left">Zip Code</div>
+                        <div class="left">Distance</div>
+                    </span>
 
-                <span id="col-right">
-                    <div class="right">
-                        <input class="checkbox" type="checkbox" v-model="settings.gluttonFree">
-                    </div>
-                    <div class="right">
-                        <input class="checkbox" type="checkbox" v-model="settings.vegan">
-                    </div>
-
-                    <div class="right">
-                        <input class="checkbox" type="checkbox" v-model="settings.vegetarian">
-                    </div>
-
-                    <div class="right">
-                        <span v-for="i in [1, 2, 3, 4]" :key=i>
-                            <a @click="setPrice(i)">
-                                <span :id="i + '-dollar'" :class="settings.price >= i ? 'dollar-light dollars fa fa-dollar' : 'dolar-default dollars fa fa-dollar'" />
-                            </a>
-                        </span>
-                    </div>
-
-                    <div class="right">
-                        <div>
-                            <input class="textbox" type="text" v-model="settings.zipCode" maxlength="5" pattern="^\d$">
+                    <span id="col-right">
+                        <div class="right">
+                            <input class="checkbox" type="checkbox" v-model="settings.gluttonFree">
                         </div>
-                    </div>
+                        <div class="right">
+                            <input class="checkbox" type="checkbox" v-model="settings.vegan">
+                        </div>
 
-                    <div class="right">
-                        <input type="range" min="1" max="25" v-model="settings.distance">
-                        <br />{{ settings.distance }}
-                        <span v-if="settings.distance == 1"> mile </span>
-                        <span v-else> miles</span>
-                    </div>
-                </span>
+                        <div class="right">
+                            <input class="checkbox" type="checkbox" v-model="settings.vegetarian">
+                        </div>
 
-                <!-- Clear / Save -->
-                <span id="button-container">
-                    <div id="reset-dislikes">
-                        <input class="reset-btn" type="button" @click="resetDisliked()" value="Reset">
-                    </div>
+                        <div class="right">
+                            <span v-for="i in [1, 2, 3, 4]" :key=i>
+                                <a @click="setPrice(i)">
+                                    <span :id="i + '-dollar'" :class="settings.price >= i ? 'dollar-light dollars fa fa-dollar' : 'dolar-default dollars fa fa-dollar'" />
+                                </a>
+                            </span>
+                        </div>
 
-                    <div id="clear-settings">
-                        <input class="clear-btn" type="button" @click="clearSettings()" value="Clear">
-                    </div>
+                        <div class="right">
+                            <div>
+                                <input class="textbox" type="text" v-model="settings.zipCode" maxlength="5" pattern="^\d$">
+                            </div>
+                        </div>
 
-                    <div id="save-settings">
-                        <input class="save-btn" type="submit" @click.prevent="saveSettings()" value="Save">
-                    </div>
-                </span>
-            </form>
-        </div>
+                        <div class="right">
+                            <input type="range" min="1" max="25" v-model="settings.distance">
+                            <br />{{ settings.distance }}
+                            <span v-if="settings.distance == 1"> mile </span>
+                            <span v-else> miles</span>
+                        </div>
+                    </span>
+
+                    <!-- Clear / Save -->
+                    <span id="button-container">
+                        <div id="reset-dislikes">
+                            <input class="reset-btn" type="button" @click="resetDisliked()" value="Reset">
+                        </div>
+
+                        <div id="clear-settings">
+                            <input class="clear-btn" type="button" @click="clearSettings()" value="Clear">
+                        </div>
+
+                        <div id="save-settings">
+                            <input class="save-btn" type="submit" @click.prevent="saveSettings()" value="Save">
+                        </div>
+                    </span>
+                </form>
+            </div>
+        </span>
+
+        <Disliked v-else
+          :getBusiness="getBusiness"
+          :goBack="goBack"
+        />
     </span>
 </template>
 
 <script>
+import Disliked from './Disliked.vue';
 export default {
   name: 'Settings',
+
+  data() {
+    return {
+      undisliking: false
+    };
+  },
+
+  components: {
+    Disliked
+  },
+
   props: {
     settings: Object,
     toggleView: {
@@ -85,13 +104,16 @@ export default {
     resetSettings: {
       type: Function,
       required: true
+    },
+    getBusiness: {
+      type: Function,
+      required: true
     }
   },
 
   methods: {
-    goBack(page) {
-      this.checkSettings();
-      this.toggleView(page);
+    goBack() {
+      this.undisliking = false;
     },
     setPrice(price) {
       this.settings.price = price;
@@ -114,8 +136,7 @@ export default {
       this.resetSettings();
     },
     resetDisliked() {
-      console.log('herere?');
-      localStorage.removeItem('disliked');
+      this.undisliking = true;
     }
   },
   mounted() {
