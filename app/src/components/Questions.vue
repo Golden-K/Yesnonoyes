@@ -9,18 +9,14 @@
     <h2 @click="handleYes()" class="fa fa-chevron-right" id="right" />
     <p>Swipe Left for NO and Right for YES</p>
     <!-- <span> -->
-      <h1 id="questions">{{ currentCat.category }}</h1>
+      <h1 v-show="currentCat.category" id="questions">{{ currentCat.category }}</h1>
     <!-- </span> -->
   </span>
 </template>
 
 <script>
-import { GLOBAL_CATEGORIES } from '../assets/CATEGORIES.js';
 import { detectSwipe } from '../services/swipe';
 
-function assignGlobal() {
-  return JSON.parse(JSON.stringify(GLOBAL_CATEGORIES));
-}
 export default {
   name: 'Questions',
   props: {
@@ -37,13 +33,17 @@ export default {
     handleSwipe: {
       type: Function,
       reuired: true
+    },
+    assignGlobal: {
+      type: Function,
+      required: true
     }
   },
 
   data() {
     return {
       currentCat: '',
-      copyCat: assignGlobal(),
+      copyCat: this.assignGlobal(),
       searchingCategories: true,
       ask: 'first',
       paramCount: 0,
@@ -55,9 +55,7 @@ export default {
     randomCat() {
       let random = Math.floor(Math.random() * this.copyCat.length);
       this.currentCat = this.copyCat[random];
-      console.log('BEFORE', this.copyCat.length);
       this.copyCat.splice(random, 1);
-      console.log('AFTER', this.copyCat.length);
       // this.copyCat = this.copyCat.filter(a => a.category !== this.currentCat.category);
 
     },
@@ -79,12 +77,12 @@ export default {
 
     getResult() {
       this.toggleView('loading');
-      this.copyCat = assignGlobal();
+      this.copyCat = this.assignGlobal();
       this.getSearchResult(this.currentCat.alias, 0);
     },
 
     goBack() {
-      this.copyCat = assignGlobal();
+      this.copyCat = this.assignGlobal();
       this.toggleView('back');
     }
   },

@@ -17,7 +17,7 @@
           <div
             :class="like.deleting ? 'name deleting-name' : 'name not-deleting-name'"
           >
-            {{ like.name }}
+            {{ like.name.length > 15 ? like.name.substr(0, 15) + '...' : like.name }}
           </div>
           <div
             :class="like.deleting ? 'del deleting' : 'del not-deleting'"

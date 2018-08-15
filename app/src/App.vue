@@ -69,6 +69,7 @@
       :toggleView="toggleView"
       :getSearchResult="getSearchResult"
       :handleSwipe="handleSwipe"
+      :assignGlobal="assignGlobal"
       v-if="view.curr === 'questions'"
     />
 
@@ -118,6 +119,7 @@ import {
   getYelpReview,
   getYelpBusiness
 } from './services/api.js';
+import { GLOBAL_CATEGORIES } from './assets/CATEGORIES.js';
 export default {
   data() {
     return {
@@ -146,6 +148,10 @@ export default {
   },
 
   methods: {
+    assignGlobal() {
+      return JSON.parse(JSON.stringify(GLOBAL_CATEGORIES));
+    },
+
     handleSwipe(id, dir) {
       // Swipe animation
       let direction;
@@ -226,6 +232,7 @@ export default {
 
       // Check if it's been Likedd
       data.isLiked = this.checkLiked(data.id);
+      data.isDisliked = this.checkDisliked(data.id);
 
       return data;
     },
@@ -237,6 +244,16 @@ export default {
       }
       else {
         return !JSON.parse(liked).every(e => e[0] !== id);
+      }
+    },
+
+    checkDisliked(id) {
+      let disliked = localStorage.getItem('disliked');
+      if(disliked === null || disliked === [] || disliked === undefined) {
+        return false;
+      }
+      else {
+        return !JSON.parse(disliked).every(e => e[0] !== id);
       }
     },
 
@@ -254,8 +271,8 @@ export default {
 
     resetSettings() {
       this.settings = {
-        price: 4,
-        distance: 10,
+        price: 2,
+        distance: 5,
         vegan: false,
         vegetarian: false,
         gluttonFree: false,
@@ -281,7 +298,7 @@ export default {
 
     randomSearch() {
       // Do random stuff
-      let categories = 'thai';
+      // let categories = ;
 
       this.toggleView('loading');
       // Wait for location to be set if not already
@@ -307,12 +324,11 @@ export default {
       // Delete next line after categories functionality is updated
       getYelpResult(categories, this.settings, offset, this.location)
         .then(result => {
-          console.log('we hurrr?');
           if(result.error) {
             this.toggleView('noresult');
             return;
           }
-          else if(this.checkLiked(result.id)) {
+          else if(this.checkLiked(result.id) || this.checkDisliked(result.id)) {
             offset++;
             this.getSearchResult(categories, offset);
           }

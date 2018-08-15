@@ -31,14 +31,13 @@ const client = require('./client.js');
 // Retrieve restaurant data
 app.post('/api', (req, res, next) => {
   const body = req.body;
-  console.log('we hear?', body);
   client.search({
     limit : 1,
     offset : body.offset,
     // open_now : true,
     sort_by: 'best_match',
     // sort_by: 'rating',
-    tern: 'restaurants',
+    term: 'restaurants',
     latitude : body.latitude,
     longitude : body.longitude,
     radius : body.radius,

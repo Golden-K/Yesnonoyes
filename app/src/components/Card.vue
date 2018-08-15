@@ -11,8 +11,11 @@
     </transition>
     <span id="title">
       <span id="back" class="fa fa-reply" @click="toggleView('back')" />
-      <h3>{{ searchResult.name }}</h3>
-      <span id="like" :class="searchResult.isLiked ? 'fa fa-heart' : 'fa fa-heart-o'" @click="handleLike()" />
+      <h3 :alt="searchResult.name">{{ searchResult.name.length > 15 ? searchResult.name.substr(0, 15) + '...' : searchResult.name }}</h3>
+      <span>
+        <span id="dislike" class="fa fa-ban text-danger" :style="searchResult.isDisliked ? 'color: #ee0000' : 'color: #111'" @click="handleDislike()" />
+        <span id="like" :class="searchResult.isLiked ? 'fa fa-heart' : 'fa fa-heart-o'" @click="handleLike()" />
+      </span>
     </span>
     <span id="img-main-container">
       <span
@@ -166,6 +169,19 @@ export default {
       }
       // Like
       else {
+        let disliked = JSON.parse(localStorage.getItem('disliked'));
+        // Undislike
+        if(this.searchResult.isDisliked && this.searchResult.isDisliked !== []) {
+          this.searchResult.isDisliked = false;
+          disliked = disliked.filter(e => e[0] !== this.searchResult.id);
+          // Reset 'disliked' to null
+          if(disliked.length === 0) {
+            localStorage.removeItem('disliked');
+          }
+          else {
+            localStorage.setItem('disliked', JSON.stringify(disliked));
+          }
+        }
         this.searchResult.isLiked = true;
         // First like
         if(liked === null) {
@@ -175,6 +191,47 @@ export default {
         else {
           liked.push([this.searchResult.id, this.searchResult.name]);
           localStorage.setItem('liked', JSON.stringify(liked));
+        }
+      }
+    },
+
+    handleDislike() {
+      let disliked = JSON.parse(localStorage.getItem('disliked'));
+      // Undislike
+      if(this.searchResult.isDisliked && this.searchResult.isDisliked !== []) {
+        this.searchResult.isDisliked = false;
+        disliked = disliked.filter(e => e[0] !== this.searchResult.id);
+        // Reset 'disliked' to null
+        if(disliked.length === 0) {
+          localStorage.removeItem('disliked');
+        }
+        else {
+          localStorage.setItem('disliked', JSON.stringify(disliked));
+        }
+      }
+      // Disike
+      else {
+        if(this.searchResult.isLiked && this.searchResult.isLiked !== []) {
+          let liked = JSON.parse(localStorage.getItem('liked'));
+          this.searchResult.isLiked = false;
+          liked = liked.filter(e => e[0] !== this.searchResult.id);
+          // Reset 'liked' to null
+          if(liked.length === 0) {
+            localStorage.removeItem('liked');
+          }
+          else {
+            localStorage.setItem('liked', JSON.stringify(liked));
+          }
+        }
+        this.searchResult.isDisliked = true;
+        // First dislike
+        if(disliked === null) {
+          localStorage.setItem('disliked', JSON.stringify([[this.searchResult.id, this.searchResult.name]]));
+        }
+        // Other dislikes
+        else {
+          disliked.push([this.searchResult.id, this.searchResult.name]);
+          localStorage.setItem('disliked', JSON.stringify(disliked));
         }
       }
     }
@@ -190,7 +247,7 @@ export default {
           this.handlePhoto(-1, 'img-main');
         }
       });
-    }, 200);
+    }, 250);
   }
 };
 </script>
@@ -257,8 +314,13 @@ h3 {
 }
 #like {
   font-size: 2rem;
-  color: black;
+  color: #111;
   cursor: pointer;
+}
+#dislike {
+  font-size: 2rem;
+  cursor: pointer;
+  padding-right: 13px;
 }
 #img-main-container {
   display: flex;
@@ -267,7 +329,7 @@ h3 {
   align-items: center;
   width: 100%;
   height: 200px;
-  background-color: black;
+  background-color: #111;
 }
 #img-main {
   display: inline-block;
@@ -350,7 +412,7 @@ h3 {
   display: inline-block;
 }
 .arrow-disable {
-  color: black;
+  color: #333;
 }
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s;
