@@ -11,88 +11,92 @@
     </transition>
     <span id="title">
       <span id="back" class="fa fa-reply" @click="toggleView('back')" />
-      <h3 :alt="searchResult.name">{{ searchResult.name.length > 15 ? searchResult.name.substr(0, 15) + '...' : searchResult.name }}</h3>
+      <span />
       <span>
-        <span id="dislike" class="fa fa-ban text-danger" :style="searchResult.isDisliked ? 'color: #ee0000' : 'color: #111'" @click="handleDislike()" />
+        <span id="dislike" class="fa fa-ban text-danger" :style="searchResult.isDisliked ? 'color: #dd0000' : 'color: #111'" @click="handleDislike()" />
         <span id="like" :class="searchResult.isLiked ? 'fa fa-heart' : 'fa fa-heart-o'" @click="handleLike()" />
       </span>
     </span>
-    <span id="img-main-container">
-      <span
-        v-if="currentPhotoNum > 0 && !zoom"
-        @click="handlePhoto(-1, 'img-main')"
-        class="fa fa-arrow-left photo-arrow"
-      />
-      <span
-        v-else
-        class="fa fa-arrow-left arrow-disable"
-      />
-      <img
-        id="img-main"
-        v-if="searchResult.photos && !zoom"
-        :src="searchResult.photos[currentPhotoNum]"
-        @click="toggleZoom(searchResult.photos[currentPhotoNum])"
-      />
-      <img
-        id="img-main"
-        v-else-if="!searchResult.photos && !zoom"
-        :src="searchResult.image_url"
-        @click="toggleZoom(searchResult.image_url)"
-      >
-      <span
-        v-if="searchResult.photos && currentPhotoNum < searchResult.photos.length - 1 && !zoom"
-        @click="handlePhoto(1, 'img-main')"
-        class="fa fa-arrow-right photo-arrow"
-      />
-      <span
-        v-else
-        class="fa fa-arrow-right arrow-disable"
-      />
-    </span>
-    <span id="info-container">
-      <span id="rating">
-        <ul>
-          <li v-for="(dollar, i) in searchResult.price" :key="i">
-            <span class="fa fa-dollar" />
-          </li>
-        </ul>
-        <!-- Yelp's star rating -->
-        <img id="stars" :src="getImagePath(searchResult.rating + '.png')">
 
-        <!-- Font Awesome star rating -->
-        <!-- <ul>
-          <li v-for="(star, i) in searchResult.rating" :key="i">
-            <span :class="star ? 'fa fa-star' : 'fa fa-star-half'" />
-          </li>
-        </ul> -->
-        <span id="review-count">{{ searchResult.review_count }} Reviews</span>
+    <div id="business-content">
+      <h3>{{ searchResult.name }}</h3>
+      <span id="img-main-container">
+        <span
+          v-if="currentPhotoNum > 0 && !zoom"
+          @click="handlePhoto(-1, 'img-main')"
+          class="fa fa-arrow-left photo-arrow"
+        />
+        <span
+          v-else
+          class="fa fa-arrow-left arrow-disable"
+        />
+        <img
+          id="img-main"
+          v-if="searchResult.photos && !zoom"
+          :src="searchResult.photos[currentPhotoNum]"
+          @click="toggleZoom(searchResult.photos[currentPhotoNum])"
+        />
+        <img
+          id="img-main"
+          v-else-if="!searchResult.photos && !zoom"
+          :src="searchResult.image_url"
+          @click="toggleZoom(searchResult.image_url)"
+        >
+        <span
+          v-if="searchResult.photos && currentPhotoNum < searchResult.photos.length - 1 && !zoom"
+          @click="handlePhoto(1, 'img-main')"
+          class="fa fa-arrow-right photo-arrow"
+        />
+        <span
+          v-else
+          class="fa fa-arrow-right arrow-disable"
+        />
       </span>
+      <span id="info-container">
+        <span id="rating">
+          <ul>
+            <li v-for="(dollar, i) in searchResult.price" :key="i">
+              <span class="fa fa-dollar" />
+            </li>
+          </ul>
+          <!-- Yelp's star rating -->
+          <img id="stars" :src="getImagePath(searchResult.rating + '.png')">
 
-      <span id="address-links-container">
-        <span id="address-container">
-          <span>{{ searchResult.location.display_address[0] }}</span>
-          <span>{{ searchResult.location.display_address[1] }}</span>
-          <span>{{ searchResult.display_phone }}</span>
+          <!-- Font Awesome star rating -->
+          <!-- <ul>
+            <li v-for="(star, i) in searchResult.rating" :key="i">
+              <span :class="star ? 'fa fa-star' : 'fa fa-star-half'" />
+            </li>
+          </ul> -->
+          <span id="review-count">{{ searchResult.review_count }} Reviews</span>
         </span>
-        <span id="links-container">
-          <span><a :href="'tel:' + searchResult.display_phone" class="fa fa-phone"></a></span>
-          <span><a :href="'http://maps.google.com/?q=' + searchResult.location.address1 + searchResult.location.city" target="_blank" class="fa fa-map"></a></span>
-          <span><a :href="searchResult.url" target="_blank" class="fa fa-yelp"></a></span>
-        </span>
-      </span>
-      <span id="review-container">
-        <!-- <h1>Recent Review</h1> -->
-        <span id="user-container">
-          <img id="user-img" :src="searchReview.user.image_url ? searchReview.user.image_url.replace('o.jpg', 'm.jpg') : 'user.png'">
-          <span id="user-sub-container">
-            <h3>{{ searchReview.user.name }}</h3>
-            <p><b>Rating:</b> {{ searchReview.rating }}</p>
-            <p>{{ new Date(searchReview.time_created + "Z").toUTCString().substr(0, 16) }}</p>
+
+        <span id="address-links-container">
+          <span id="address-container">
+            <span>{{ searchResult.location.display_address[0] }}</span>
+            <span>{{ searchResult.location.display_address[1] }}</span>
+            <span>{{ searchResult.display_phone }}</span>
+          </span>
+          <span id="links-container">
+            <span><a :href="'tel:' + searchResult.display_phone" class="fa fa-phone"></a></span>
+            <span><a :href="'http://maps.google.com/?q=' + searchResult.location.address1 + searchResult.location.city" target="_blank" class="fa fa-map"></a></span>
+            <span><a :href="searchResult.url" target="_blank" class="fa fa-yelp"></a></span>
           </span>
         </span>
-        <p>{{ searchReview.text }} <a :href="searchReview.url" target="_blank">Read more</a></p>
+        <span id="review-container">
+          <!-- <h1>Recent Review</h1> -->
+          <span id="user-container">
+            <img id="user-img" :src="searchReview.user.image_url ? searchReview.user.image_url.replace('o.jpg', 'm.jpg') : 'user.png'">
+            <span id="user-sub-container">
+              <h3>{{ searchReview.user.name }}</h3>
+              <p><b>Rating:</b> {{ searchReview.rating }}</p>
+              <p>{{ new Date(searchReview.time_created + "Z").toUTCString().substr(0, 16) }}</p>
+            </span>
+          </span>
+          <p>{{ searchReview.text }} <a :href="searchReview.url" target="_blank">Read more</a></p>
+        </span>
       </span>
-    </span>
+    </div>
   </span>
 </template>
 
@@ -323,9 +327,9 @@ h3 {
   padding-right: 13px;
 }
 #img-main-container {
+  overflow: hidden;
   display: flex;
   flex-direction: row;
-  overflow: hidden;
   align-items: center;
   width: 100%;
   height: 200px;
@@ -337,6 +341,10 @@ h3 {
   width: 200px;
   margin: auto;
   transition: .5s;
+}
+#business-content {
+  overflow: scroll;
+  height: calc(100% - 50px);
 }
 #info-container {
   display: flex;

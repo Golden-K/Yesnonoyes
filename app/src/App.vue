@@ -90,6 +90,7 @@
       :settings="settings"
       :resetSettings="resetSettings"
       :checkSettings="checkSettings"
+      :getBusiness="getBusiness"
       v-if="view.curr === 'settings'"
     />
 
@@ -121,6 +122,8 @@ import {
 } from './services/api.js';
 import { GLOBAL_CATEGORIES } from './assets/CATEGORIES.js';
 export default {
+  name: 'app',
+
   data() {
     return {
       location: {
@@ -183,9 +186,6 @@ export default {
         this.view.prev = '';
       }
       else {
-        if(view === 'settings') {
-          this.checkSettings();
-        }
         this.view.prev = this.view.curr;
         this.view.curr = view;
       }
