@@ -54,7 +54,7 @@
                     <!-- Clear / Save -->
                     <span id="button-container">
                         <div id="reset-dislikes">
-                            <input class="reset-btn" type="button" @click="resetDisliked()" value="Reset">
+                            <input class="reset-btn" type="button" @click="resetDisliked()" value="Dislikes">
                         </div>
 
                         <div id="clear-settings">

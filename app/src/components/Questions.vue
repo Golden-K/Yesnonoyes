@@ -56,7 +56,7 @@ export default {
       let random = Math.floor(Math.random() * this.copyCat.length);
       this.currentCat = this.copyCat[random];
       this.copyCat.splice(random, 1);
-      // this.copyCat = this.copyCat.filter(a => a.category !== this.currentCat.category);
+      // this. = this..filter(a => a.category !== this.currentCat.category);
 
     },
 
@@ -88,7 +88,6 @@ export default {
   },
 
   mounted() {
-    console.log('copycat', this.copyCat);
     this.randomCat();
     detectSwipe('questions-main', (id, dir) => {
       if(dir === 'r') {

@@ -201,7 +201,8 @@ export default {
         .then(res => {
           this.location.lat = res.location.lat;
           this.location.lon = res.location.lng;
-        });
+        })
+        .catch(err => console.log('error setting the location:', err));
     },
 
     parseResults(data) {
@@ -297,14 +298,9 @@ export default {
     },
 
     randomSearch() {
-      // Do random stuff
-      // let categories = ;
-
       this.toggleView('loading');
-      // Wait for location to be set if not already
-      // setTimeout(() => {
-      this.getSearchResult(categories, parseInt(Math.random() * 10));
-      // }, 200);
+      let random = GLOBAL_CATEGORIES[Math.floor() * GLOBAL_CATEGORIES.length];
+      this.getSearchResult(random.alias, Math.floor(Math.random() * 10));
     },
 
     startAsking() {
@@ -321,7 +317,6 @@ export default {
       //   liked = JSON.parse(localStorage.getItem('liked'));
       // }
 
-      // Delete next line after categories functionality is updated
       getYelpResult(categories, this.settings, offset, this.location)
         .then(result => {
           if(result.error) {

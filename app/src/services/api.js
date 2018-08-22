@@ -23,7 +23,8 @@ export {
 
 function getLocationAPI() {
   return fetch('https://location.services.mozilla.com/v1/geolocate?key=test')
-    .then(res => res.json());
+    .then(res => res.json())
+    .catch(err => console.log('error retrieving location:', err));
 }
 
 function getYelpResult(categories, settings, offset, location) {
